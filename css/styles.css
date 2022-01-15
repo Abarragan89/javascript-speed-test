@@ -1,0 +1,74 @@
+:root {
+    --pinkClr: rgba(179, 41, 170, 0.838);
+    --btnBgClr: rgb(89, 5, 89);
+}
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body {
+    border: 2px double rgb(145, 141, 141);
+    outline: 2px groove rgba(114, 218, 114, 0.791);
+    border-radius: 5px;
+    margin: 30px;
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    margin: 50px;
+    margin-top: 20px;
+}
+header p {
+    display: inline;
+}
+header a {
+    text-decoration: none;
+    color: var(--pinkClr);
+}
+
+.title {
+    text-align: center;
+    padding-bottom: 20px;
+}
+.instructions {
+    text-align: center;
+    line-height: 1.5;
+    padding: 0 15vw 20px;
+}
+
+.btn {
+    padding: 5px 0; 
+    background-color: var(--btnBgClr);
+    color: rgb(216, 213, 213);
+    font-size: 2vw;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 5px;
+    width: 17%;
+    margin: auto;
+    margin-bottom: 250px;
+    display: block;
+}
+.btn:hover {
+    background-color: var(--pinkClr);
+}
+.question_div {
+    padding: 0 15vw;
+    padding-bottom: 20px;
+} 
+.question {
+    
+    font-size: 3.5vw;
+    text-align: left;
+}
+.answerBtn {
+    margin: 20px;
+    width: 35%;
+    font-size: 2vw;
+    text-align: left;
+    padding: .5vw;
+}
+.answerBtn p {
+    display: inline;
+}
