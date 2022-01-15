@@ -64,11 +64,27 @@ header a {
 }
 .answerBtn {
     margin: 20px;
-    width: 35%;
+    width: 40%;
     font-size: 2vw;
     text-align: left;
     padding: .5vw;
 }
 .answerBtn p {
     display: inline;
+}
+
+footer {
+    border-top: 1px solid gray;
+    color: gray;
+    font-size: 3vw;
+    padding-top: 2vw;
+    margin-left: 20px;
+}
+
+/* Styles for ending page */
+
+.end_page {
+    margin: 0 auto;
+    width: 50%;
+    line-height: 1.5;
 }

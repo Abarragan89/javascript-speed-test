@@ -1,19 +1,95 @@
 "use strict";
+let seconds = 55555;
+let clock;
+let questionCount = 0;
+let score = 0;
+
 const bodyEl = document.querySelector("body");
 const startBtnEl = document.getElementById("startBtn");
 const mainEl = document.createElement("main");
 const problems = [
     {
         question: "String values must be enclosed within ______ when being assigned to variable.",
-        answers: 
-        ["<p data-answer='true'>parenthesis</p>", 
-        "<p>commas</p>", 
-        "<p>quotes</p>",
-        "<p>curly brackets</p>"]
-    }
+        answers:
+            ["<p data-answer='true' class='correct'>parenthesis</p>",
+                "<p>commas</p>",
+                "<p>quotes</p>",
+                "<p>curly brackets</p>"]
+    },
+    {
+        question: "What is a function?",
+        answers:
+            ["<p data-answer='true' class='correct'>block of code that will execute when called</p>",
+                "<p>a specific type of for-loop</p>",
+                "<p>an object with that cannot be changed</p>",
+                "<p>code that will execute automatically</p>"]
+    },
+    {
+        question: "What are arrays used for?",
+        answers:
+            ["<p data-answer='true' class='correct'>to store data as a list</p>",
+                "<p>store data as key-value pairs</p>",
+                "<p>iterate through objects</p>",
+                "<p>iterate through DOM elements</p>"]
+    },
+    {
+        question: "How can we access HTML elements using Javascript?",
+        answers:
+            ["<p data-answer='true' class='correct'>by accessing the Document Object Model</p>",
+                "<p>by accessing the objects in the HTML</p>",
+                "<p>by accessing CSS selectors</p>",
+                "<p>you cannot access the HTML with Javascript</p>"]
+    },
+    // {
+    //     question: "What is the syntax for a for loop?",
+    //     answers:
+    //         ["<p data-answer='true' class='correct'>for (let i = 0; i < 4; i++){code here}</p>",
+    //             "<p>for (let i = 0; i < 4; i+){code here}</p>",
+    //             "<p>for (let i < 0; i = 4; i++){code here}</p>",
+    //             "<p>for (let i = 0 i < 4 i++){code here}</p>"]
+    // },
+    // {
+    //     question: "Functions that belong to an object are called ____________.",
+    //     answers:
+    //         ["<p data-answer='true' class='correct'>Methods</p>",
+    //             "<p>function objects</p>",
+    //             "<p>funky objects</p>",
+    //             "<p>properties</p>"]
+    // },
+    // {
+    //     question: "What is one good use for 'console.log'?",
+    //     answers:
+    //         ["<p data-answer='true' class='correct'>check for variables with debugging</p>",
+    //             "<p>give user feedback</p>",
+    //             "<p>change error codes</p>",
+    //             "<p>checking for error codes</p>"]
+    // },
+    // {
+    //     question: "We declare ___________ in order to create ____________",
+    //     answers:
+    //         ["<p data-answer='true' class='correct'>HTML tags / DOM elements</p>",
+    //             "<p>for-loops / HTML tags </p>",
+    //             "<p>arrays / DOM elements</p>",
+    //             "<p>DOM elements / HTML tags</p>"]
+    // },
+    // {
+    //     question: "What is one precaution you must take when using a while or for-loop?",
+    //     answers:
+    //         ["<p data-answer='true' class='correct'>Make sure there's a valid stopping condition</p>",
+    //             "<p>forgetting to make key-value pairs</p>",
+    //             "<p>not putting quotation marks</p>",
+    //             "<p>remembering that for loops are for objects and while loops are for arrays</p>"]
+    // },
+    // {
+    //     question: "What is the difference between 'const' and 'let' declarations?",
+    //     answers:
+    //         ["<p data-answer='true' class='correct'>let declarations can be changed</p>",
+    //             "<p>const declarations cannot be changed</p>",
+    //             "<p>there is no difference</p>",
+    //             "<p>const declarations can only be made outside functions</p>"]
+    // }
 ]
-
-
+const shuffledProblems = shuffle(problems);
 // Set up the opening page
 const homePage = function () {
     // Header (create 'view high scores' and timer elements)
@@ -26,7 +102,7 @@ const homePage = function () {
     headerEl.appendChild(headerLinkEl);
     // timer element:
     const headerTimerEl = document.createElement("div");
-    headerTimerEl.innerHTML = "<p>Timer: </p><span id='timer'>" + timer.seconds + "</span>";
+    headerTimerEl.innerHTML = "<p>Timer: </p><span id='timer'>" + seconds + "</span>";
     headerEl.appendChild(headerTimerEl)
 
     // Main (create title, instructions, and start button) 
@@ -53,73 +129,114 @@ const homePage = function () {
 
 const startGame = function () {
     //shuffle array
-    shuffle(problems);
-    deleteMain();
+    clearMain();
     displayProblem();
     // initial timer
-    timer.clock();
-    answerFunctionality();
-
-    // recreate main
+    clock = setInterval(countdown, 1000);
+    // give buttons event handlers
+    answerBtnFunctionality();
 }
+
 const displayProblem = function () {
-    // display question
-    const questionDiv = document.createElement("div");
-    questionDiv.className = "question_div"
-    const question = document.createElement("h2");
-    question.className = "question"
-    question.textContent = problems[0].question
-    questionDiv.appendChild(question);
-    // display answers
-    const answerArr = shuffle(problems[0].answers)
-    console.log(answerArr);
-    for(let i = 0; i < 4; i++) {
-        const answerButton = document.createElement("button");
-        answerButton.className = "btn answerBtn";
-        answerButton.innerHTML = (i + 1)+". " + answerArr[i];
-        // check to see if it was the correct answer and add class to it if it is. 
-        // class is needed to check when adding event handler
-        // if (answerArr[i].hasAttribute("data-answer")){
-        //     answer
-        // }
-
-        questionDiv.appendChild(answerButton);
-    }
-    mainEl.appendChild(questionDiv);
-}
-// Timer object
-const timer = {
-    seconds: 5,
-    countdown: function() {
-        this.seconds--;
-        const timer = document.getElementById("timer");
-        timer.textContent = this.seconds;
-        if (this.seconds === 0){
-            alert("Times Up")
-            clearInterval(clock);
+    if (questionCount === problems.length) {
+        endGamePage();
+    } else {
+        // create question div
+        console.log(questionCount);
+        const questionDiv = document.createElement("div");
+        questionDiv.className = "question_div";
+        const question = document.createElement("h2");
+        question.className = "question";
+        // pick a question
+        question.textContent = shuffledProblems[questionCount].question
+        questionDiv.appendChild(question);
+        // display answers
+        const answerArr = shuffle(problems[questionCount].answers);
+        for (let i = 0; i < 4; i++) {
+            const answerButton = document.createElement("button");
+            answerButton.className = "btn answerBtn";
+            answerButton.innerHTML = (i + 1) + ". " + answerArr[i];
+            questionDiv.appendChild(answerButton);
         }
-    },
-    clock: function() {
-        setInterval(this.countdown, 1000);
+        mainEl.appendChild(questionDiv);
+        questionCount++;
+    }
+}
+// Countdown function
+const countdown = function () {
+    seconds--;
+    const timer = document.getElementById("timer");
+    timer.textContent = seconds;
+    if (seconds === 0) {
+        alert("Times Up");
+        clearInterval(clock)
     }
 };
 
-// add event listener to .question_div
-// if event.target.class === 'correct' execute correct function
-// else execute incorrect function
-const reviewer = function(event) {
-    if (event.target.hasAttribute("data-answer")) {
-        alert("correct");
+// Checks to see if the answer is correct, adds score or subtracts time. 
+const reviewer = function (event) {
+    if (event.target.hasAttribute("data-answer") || event.target.querySelector(".correct")) {
+        console.log("correct")
+        clearMain();
+        displayProblem();
+        answerBtnFunctionality();
+        showCorrect();
     } else {
-        alert("incorrect");
+        console.log("incorrect");
+        seconds -= 10;
+        clearMain();
+        displayProblem();
+        answerBtnFunctionality();
+        showWrong();
+    }
+}
+// Remove footer when hover over button
+const removeFooter = function() {
+    const questionDivEl = document.querySelector(".question_div");
+    const footer = document.querySelector("footer");
+    questionDivEl.removeChild(footer);
+}
+
+// Make buttons clickable
+const answerBtnFunctionality = function () {
+    const buttonAnswerArr = document.querySelectorAll(".answerBtn");
+    for (let i = 0; i < buttonAnswerArr.length; i++) {
+        buttonAnswerArr[i].addEventListener("click", reviewer);
+        buttonAnswerArr[i].addEventListener("mouseout", removeFooter);
     }
 }
 
-const answerFunctionality = function () {
-    const buttonAnswerArr = document.querySelectorAll(".answerBtn");
-    for (let i =0; i < buttonAnswerArr.length; i++){
-        buttonAnswerArr[i].addEventListener("click", reviewer);
-    }
+// add message of "wrong" / "right"
+const showCorrect = function () {
+    const questionDivEl = document.querySelector(".question_div");
+    const footer = document.createElement("footer");
+    footer.textContent = "Correct!"
+    questionDivEl.appendChild(footer);
+}
+const showWrong = function () {
+    const questionDivEl = document.querySelector(".question_div");
+    const footer = document.createElement("footer");
+    footer.textContent = "Wrong!"
+    questionDivEl.appendChild(footer);
+}
+const endGamePage = function() {
+    document.querySelector("#timer").textContent = seconds;
+    clearInterval(clock);
+    clearMain();
+    // Add message and show score
+    const endingDivEl = document.createElement("div")
+    endingDivEl.className = "end_page";
+    mainEl.appendChild(endingDivEl);
+    const title = document.createElement("h2");
+    title.textContent = "All done!";
+    endingDivEl.appendChild(title)
+    const message = document.createElement("p")
+    message.innerHTML = "Your final score is " + seconds;
+    endingDivEl.appendChild(message);
+    // Add form
+    const formDivEl = document.createElement("div")
+    formDivEl.className = "form_div";
+    
 }
 
 
@@ -131,18 +248,13 @@ homePage();
 
 
 
-
-
-
-
-
 // HELPER FUNCTIONS
 // insert after
 function insertAfter(newNode, referenceNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }
 // erase the main section
-function deleteMain() {
+function clearMain() {
     let element = document.querySelector("main")
     while (element.firstChild) {
         element.removeChild(element.firstChild);
@@ -156,7 +268,6 @@ function randomNumber(max) {
 // Shuffle Array 
 function shuffle(array) {
     let currentIndex = array.length, randomIndex;
-
     // While there remain elements to shuffle...
     while (currentIndex != 0) {
 
@@ -168,6 +279,5 @@ function shuffle(array) {
         [array[currentIndex], array[randomIndex]] = [
             array[randomIndex], array[currentIndex]];
     }
-
     return array;
 }
