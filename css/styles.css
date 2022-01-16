@@ -97,3 +97,29 @@ form {
     margin-top: 3vw;
     margin-bottom: 200px;
 }
+#submit {
+    padding: 1px; 
+    margin-left: 1vw;
+    width: 10%;
+    display: inline;
+    font-size: 1.2vw;
+}
+.highscore_div {
+    width: 30%;
+    margin: 0 auto;
+}
+.highscore_div p {
+    margin-top: 1vw;
+    background-color: rgba(182, 150, 193, 0.475);
+    line-height: 1.5;
+}
+.highscorePageBtn {
+    margin: 1vw 1vw 10vw 0;
+    padding: 1px 1vw; 
+    background-color: var(--btnBgClr);
+    color: rgb(216, 213, 213);
+    font-size: 1.5vw;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 5px;
+}

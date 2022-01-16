@@ -1,8 +1,9 @@
 "use strict";
-let seconds = 5;
+let seconds = 75;
 let clock;
 let questionCount = 0;
 let score = 0;
+let player = "";
 
 const bodyEl = document.querySelector("body");
 const startBtnEl = document.getElementById("startBtn");
@@ -129,7 +130,7 @@ const homePage = function () {
 
 const startGame = function () {
     //shuffle array
-    clearMain();
+    clearElement("main");
     displayProblem();
     // initial timer
     clock = setInterval(countdown, 1000);
@@ -179,14 +180,14 @@ const countdown = function () {
 const reviewer = function (event) {
     if (event.target.hasAttribute("data-answer") || event.target.querySelector(".correct")) {
         console.log("correct")
-        clearMain();
+        clearElement("main");
         displayProblem();
         answerBtnFunctionality();
         showCorrect();
     } else {
         console.log("incorrect");
         seconds -= 10;
-        clearMain();
+        clearElement("main");
         displayProblem();
         answerBtnFunctionality();
         showWrong();
@@ -227,10 +228,11 @@ const showWrong = function () {
         questionDivEl.appendChild(footer);
     }
 }
+// Show the ending page
 const endGamePage = function() {
     document.querySelector("#timer").textContent = seconds;
     clearInterval(clock);
-    clearMain();
+    clearElement("main");
     // Add message and show score
     const endingDivEl = document.createElement("div")
     endingDivEl.className = "end_page";
@@ -249,40 +251,77 @@ const endGamePage = function() {
     mainEl.appendChild(formEl);
     // add functionality to submit button
     const submit = document.getElementById("submit");
-    console.log(submit)
-    submit.addEventListener("click", onSubmit);
-    
+    submit.className = "btn"
+    submit.addEventListener("click", onSubmit);   
 }
 
 // Submit Event hander
 const onSubmit = function(event) {
     event.preventDefault();
     const form = document.querySelector("form")
-    const player = form.querySelector("input[type='text']").value
+    let player = form.querySelector("input[type='text']").value
     console.log(player)
     const score = seconds;
     console.log(score)
-    saveHighscore();
+    saveHighscore(score, player);
     highscorePage();
 }
-const saveHighscore = function () {
+const saveHighscore = function (score, player) {
     score = seconds
     const pastHighscore = localStorage.getItem("js_highscore");
     if (!pastHighscore || score > pastHighscore) {
         localStorage.setItem("js_highscore", score);
+        localStorage.setItem("player", player);
         alert("New highscore!")
     } else {
-        alert("Nice attempt. Try again.")
+        alert("You did not beat the highscore. Try again.")
     }
 }
 const highscorePage = function() {
-    clearMain();
-
+    clearElement("main");
+    // create div
+    const highscoreDivEl = document.createElement("div")
+    highscoreDivEl.className = "highscore_div";
+    mainEl.appendChild(highscoreDivEl);
+    // create h2 title
+    const titleEl = document.createElement("h2");
+    titleEl.textContent = "High score:";
+    highscoreDivEl.appendChild(titleEl);
+    // create highscore
+    const highscore = document.createElement("p");
+    highscore.className = "highscore_display";
+    // retrieve and display local storage highscore
+    const player = localStorage.getItem("player");
+    const score = localStorage.getItem("js_highscore")
+    highscore.textContent = "1. " + player + " - " + score;
+    highscoreDivEl.appendChild(highscore);
+    // make buttons "Go back" and "Clear high scores";
+    const highscoreBtnDivEl = document.createElement("div")
+    highscoreBtnDivEl.innerHTML = "<input type='button' class='highscorePageBtn' id='go_back' value='Go Back'><input type='button' class='highscorePageBtn' id='clear_highscore' value='Clear high scores'>"
+    highscoreDivEl.appendChild(highscoreBtnDivEl);
+    const goBack = document.querySelector("#go_back");
+    const clearHighscore = document.querySelector("#clear_highscore");
+    goBack.addEventListener("click", resetGame)
+    clearHighscore.addEventListener("click", clearLocalStorage);
 }
+const clearLocalStorage = function() {
+    localStorage.removeItem("player");
+    localStorage.removeItem("js_highscore");
+    const display = document.querySelector("p.highscore_display");
+    display.textContent = "No high score";
+}
+const resetGame = function() {
+    seconds = 75;
+    clock;
+    questionCount = 0;
+    score = 0;
+    clearElement("main")
+    clearElement("body");
+    homePage();
+}
+
 // Initial Function Call
 homePage();
-
-
 
 
 // HELPER FUNCTIONS
@@ -291,8 +330,8 @@ function insertAfter(newNode, referenceNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }
 // erase the main section
-function clearMain() {
-    let element = document.querySelector("main")
+function clearElement(element) {
+    element = document.querySelector(element)
     while (element.firstChild) {
         element.removeChild(element.firstChild);
     }
@@ -317,4 +356,4 @@ function shuffle(array) {
             array[randomIndex], array[currentIndex]];
     }
     return array;
-}
+};
