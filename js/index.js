@@ -41,56 +41,57 @@ const problems = [
                 "<p>by accessing CSS selectors</p>",
                 "<p>you cannot access the HTML with Javascript</p>"]
     },
-    // {
-    //     question: "What is the syntax for a for loop?",
-    //     answers:
-    //         ["<p data-answer='true' class='correct'>for (let i = 0; i < 4; i++){code here}</p>",
-    //             "<p>for (let i = 0; i < 4; i+){code here}</p>",
-    //             "<p>for (let i < 0; i = 4; i++){code here}</p>",
-    //             "<p>for (let i = 0 i < 4 i++){code here}</p>"]
-    // },
-    // {
-    //     question: "Functions that belong to an object are called ____________.",
-    //     answers:
-    //         ["<p data-answer='true' class='correct'>Methods</p>",
-    //             "<p>function objects</p>",
-    //             "<p>funky objects</p>",
-    //             "<p>properties</p>"]
-    // },
-    // {
-    //     question: "What is one good use for 'console.log'?",
-    //     answers:
-    //         ["<p data-answer='true' class='correct'>check for variables with debugging</p>",
-    //             "<p>give user feedback</p>",
-    //             "<p>change error codes</p>",
-    //             "<p>checking for error codes</p>"]
-    // },
-    // {
-    //     question: "We declare ___________ in order to create ____________",
-    //     answers:
-    //         ["<p data-answer='true' class='correct'>HTML tags / DOM elements</p>",
-    //             "<p>for-loops / HTML tags </p>",
-    //             "<p>arrays / DOM elements</p>",
-    //             "<p>DOM elements / HTML tags</p>"]
-    // },
-    // {
-    //     question: "What is one precaution you must take when using a while or for-loop?",
-    //     answers:
-    //         ["<p data-answer='true' class='correct'>Make sure there's a valid stopping condition</p>",
-    //             "<p>forgetting to make key-value pairs</p>",
-    //             "<p>not putting quotation marks</p>",
-    //             "<p>remembering that for loops are for objects and while loops are for arrays</p>"]
-    // },
-    // {
-    //     question: "What is the difference between 'const' and 'let' declarations?",
-    //     answers:
-    //         ["<p data-answer='true' class='correct'>let declarations can be changed</p>",
-    //             "<p>const declarations cannot be changed</p>",
-    //             "<p>there is no difference</p>",
-    //             "<p>const declarations can only be made outside functions</p>"]
-    // }
+    {
+        question: "What is the syntax for a for loop?",
+        answers:
+            ["<p data-answer='true' class='correct'>for (let i = 0; i < 4; i++){code here}</p>",
+                "<p>for (let i = 0; i < 4; i+){code here}</p>",
+                "<p>for (let i < 0; i = 4; i++){code here}</p>",
+                "<p>for (let i = 0 i < 4 i++){code here}</p>"]
+    },
+    {
+        question: "Functions that belong to an object are called ____________.",
+        answers:
+            ["<p data-answer='true' class='correct'>Methods</p>",
+                "<p>function objects</p>",
+                "<p>funky objects</p>",
+                "<p>properties</p>"]
+    },
+    {
+        question: "What is one good use for 'console.log'?",
+        answers:
+            ["<p data-answer='true' class='correct'>check for variables with debugging</p>",
+                "<p>give user feedback</p>",
+                "<p>change error codes</p>",
+                "<p>checking for error codes</p>"]
+    },
+    {
+        question: "We declare ___________ in order to create ____________",
+        answers:
+            ["<p data-answer='true' class='correct'>HTML tags / DOM elements</p>",
+                "<p>for-loops / HTML tags </p>",
+                "<p>arrays / DOM elements</p>",
+                "<p>DOM elements / HTML tags</p>"]
+    },
+    {
+        question: "What is one precaution you must take when using a while or for-loop?",
+        answers:
+            ["<p data-answer='true' class='correct'>Make sure there's a valid stopping condition</p>",
+                "<p>forgetting to make key-value pairs</p>",
+                "<p>not putting quotation marks</p>",
+                "<p>remembering that for loops are for objects and while loops are for arrays</p>"]
+    },
+    {
+        question: "What is the difference between 'const' and 'let' declarations?",
+        answers:
+            ["<p data-answer='true' class='correct'>let declarations can be changed</p>",
+                "<p>const declarations cannot be changed</p>",
+                "<p>there is no difference</p>",
+                "<p>const declarations can only be made outside functions</p>"]
+    }
 ]
 const shuffledProblems = shuffle(problems);
+
 // Set up the opening page
 const homePage = function () {
     // Header (create 'view high scores' and timer elements)
@@ -105,7 +106,6 @@ const homePage = function () {
     const headerTimerEl = document.createElement("div");
     headerTimerEl.innerHTML = "<p>Timer: </p><span id='timer'>" + seconds + "</span>";
     headerEl.appendChild(headerTimerEl)
-
     // Main (create title, instructions, and start button) 
     // title:
     insertAfter(mainEl, headerEl)
@@ -127,7 +127,7 @@ const homePage = function () {
     // give the button functionality
     startBtnEl.addEventListener("click", startGame)
 }
-
+// Start game event handler
 const startGame = function () {
     //shuffle array
     clearElement("main");
@@ -137,13 +137,14 @@ const startGame = function () {
     // give buttons event handlers
     answerBtnFunctionality();
 }
-
+// cycle through the problems
 const displayProblem = function () {
+    // Check to see if you went through all the problems
     if (questionCount === problems.length) {
         endGamePage();
     } else {
+        // Display next question
         // create question div
-        console.log(questionCount);
         const questionDiv = document.createElement("div");
         questionDiv.className = "question_div";
         const question = document.createElement("h2");
@@ -179,13 +180,11 @@ const countdown = function () {
 // Checks to see if the answer is correct, adds score or subtracts time. 
 const reviewer = function (event) {
     if (event.target.hasAttribute("data-answer") || event.target.querySelector(".correct")) {
-        console.log("correct")
         clearElement("main");
         displayProblem();
         answerBtnFunctionality();
         showCorrect();
     } else {
-        console.log("incorrect");
         seconds -= 10;
         clearElement("main");
         displayProblem();
@@ -194,14 +193,13 @@ const reviewer = function (event) {
     }
 }
 // Remove footer when hover over button
-const removeFooter = function() {
+const removeFooter = function () {
     const questionDivEl = document.querySelector(".question_div");
     const footer = document.querySelector("footer");
     if (footer) {
         questionDivEl.removeChild(footer);
     }
 }
-
 // Make buttons clickable
 const answerBtnFunctionality = function () {
     const buttonAnswerArr = document.querySelectorAll(".answerBtn");
@@ -210,8 +208,8 @@ const answerBtnFunctionality = function () {
         buttonAnswerArr[i].addEventListener("mouseout", removeFooter);
     }
 }
-
-// add message of "wrong" / "right"
+// add message of "wrong" / "right" in footer
+// Right: 
 const showCorrect = function () {
     const questionDivEl = document.querySelector(".question_div");
     const footer = document.createElement("footer");
@@ -220,6 +218,7 @@ const showCorrect = function () {
         questionDivEl.appendChild(footer);
     }
 }
+// Wrong:
 const showWrong = function () {
     const questionDivEl = document.querySelector(".question_div");
     const footer = document.createElement("footer");
@@ -228,8 +227,9 @@ const showWrong = function () {
         questionDivEl.appendChild(footer);
     }
 }
-// Show the ending page
-const endGamePage = function() {
+// Stop game and show End game page
+const endGamePage = function () {
+    // show seconds at zero and clear interval and main element
     document.querySelector("#timer").textContent = seconds;
     clearInterval(clock);
     clearElement("main");
@@ -247,37 +247,41 @@ const endGamePage = function() {
     const formDivEl = document.createElement("div")
     formDivEl.className = "form_div";
     const formEl = document.createElement("form")
-    formEl.innerHTML = "<label for='highscore'><p>Enter Initials: </p></label> <input type='text' name='highscore' id='highscore'><input type='button' value='submit' id='submit'>";
+    formEl.innerHTML = "<label for='highscore'><p>Enter Initials: </p></label> <input type='text' name='highscore' id='highscore'><input type='submit' value='submit' id='submit'>";
     mainEl.appendChild(formEl);
     // add functionality to submit button
     const submit = document.getElementById("submit");
     submit.className = "btn"
-    submit.addEventListener("click", onSubmit);   
+    submit.addEventListener("click", onSubmit);
 }
 
 // Submit Event hander
-const onSubmit = function(event) {
+const onSubmit = function (event) {
     event.preventDefault();
     const form = document.querySelector("form")
     let player = form.querySelector("input[type='text']").value
-    console.log(player)
+    if (!player) {
+        alert("Please enter your initials");
+        onSubmit();
+    }
     const score = seconds;
-    console.log(score)
     saveHighscore(score, player);
     highscorePage();
 }
+// Save high score to local storage
 const saveHighscore = function (score, player) {
-    score = seconds
+    score = seconds;
     const pastHighscore = localStorage.getItem("js_highscore");
     if (!pastHighscore || score > pastHighscore) {
         localStorage.setItem("js_highscore", score);
         localStorage.setItem("player", player);
-        alert("New highscore!")
+        alert("New highscore!");
     } else {
         alert("You did not beat the highscore. Try again.")
     }
 }
-const highscorePage = function() {
+// Display high score page and retrieve high score from local storage
+const highscorePage = function () {
     clearElement("main");
     // create div
     const highscoreDivEl = document.createElement("div")
@@ -304,13 +308,15 @@ const highscorePage = function() {
     goBack.addEventListener("click", resetGame)
     clearHighscore.addEventListener("click", clearLocalStorage);
 }
-const clearLocalStorage = function() {
+// Event Handler to Clear Local Storage
+const clearLocalStorage = function () {
     localStorage.removeItem("player");
     localStorage.removeItem("js_highscore");
     const display = document.querySelector("p.highscore_display");
     display.textContent = "No high score";
 }
-const resetGame = function() {
+// Event Handler for Go Back. Resets global variables
+const resetGame = function () {
     seconds = 75;
     clock;
     questionCount = 0;
@@ -319,12 +325,9 @@ const resetGame = function() {
     clearElement("body");
     homePage();
 }
-
 // Initial Function Call
 homePage();
-
-
-// HELPER FUNCTIONS
+////////////////////////////// HELPER FUNCTIONS //////////////////////////////////////
 // insert after
 function insertAfter(newNode, referenceNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
@@ -340,7 +343,6 @@ function clearElement(element) {
 function randomNumber(max) {
     return Math.floor(Math.random() * max);
 }
-
 // Shuffle Array 
 function shuffle(array) {
     let currentIndex = array.length, randomIndex;

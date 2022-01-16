@@ -1,0 +1,48 @@
+@media screen and (max-width: 500px){
+    .highscorePageBtn {
+        font-size: 2.5vw;
+    }
+    #submit {
+        padding: 2px; 
+        margin-top: 1vw;
+        width: auto;
+        display: inline;
+        font-size: 4vw;
+    }
+    #startBtn {
+        font-size: 3vw;
+        width: 40%;
+        font-size: .7em;
+    }
+    #go_back {
+        margin-bottom: 1vw;
+    }
+    h1 {
+        font-size: 1.2em;
+    }
+    .highscore_div {
+        width: 50%;
+    }
+    h2 {
+        font-size: 1.2em;
+    }
+    header {
+        margin: 10px;
+    }
+    p, header span, header a {
+        font-size: .7em;
+    }
+    .answerBtn {
+        margin: 5px;
+        width: 100%;
+        font-size: 4vw;
+        text-align: left;
+        padding: 1px;
+    }
+    footer {
+        margin: 5px;
+    }
+    input[type='text'] {
+        width: 80%;
+    }
+}
