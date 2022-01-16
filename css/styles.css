@@ -88,3 +88,12 @@ footer {
     width: 50%;
     line-height: 1.5;
 }
+form p {
+    display: inline;
+}
+form {
+    margin: 0 auto;
+    width: 50%;
+    margin-top: 3vw;
+    margin-bottom: 200px;
+}

@@ -1,5 +1,5 @@
 "use strict";
-let seconds = 55555;
+let seconds = 5;
 let clock;
 let questionCount = 0;
 let score = 0;
@@ -167,9 +167,11 @@ const countdown = function () {
     seconds--;
     const timer = document.getElementById("timer");
     timer.textContent = seconds;
-    if (seconds === 0) {
+    if (seconds <= 0) {
+        seconds = 0;
         alert("Times Up");
-        clearInterval(clock)
+        clearInterval(clock);
+        endGamePage();
     }
 };
 
@@ -194,7 +196,9 @@ const reviewer = function (event) {
 const removeFooter = function() {
     const questionDivEl = document.querySelector(".question_div");
     const footer = document.querySelector("footer");
-    questionDivEl.removeChild(footer);
+    if (footer) {
+        questionDivEl.removeChild(footer);
+    }
 }
 
 // Make buttons clickable
@@ -211,13 +215,17 @@ const showCorrect = function () {
     const questionDivEl = document.querySelector(".question_div");
     const footer = document.createElement("footer");
     footer.textContent = "Correct!"
-    questionDivEl.appendChild(footer);
+    if (questionDivEl) {
+        questionDivEl.appendChild(footer);
+    }
 }
 const showWrong = function () {
     const questionDivEl = document.querySelector(".question_div");
     const footer = document.createElement("footer");
     footer.textContent = "Wrong!"
-    questionDivEl.appendChild(footer);
+    if (questionDivEl) {
+        questionDivEl.appendChild(footer);
+    }
 }
 const endGamePage = function() {
     document.querySelector("#timer").textContent = seconds;
@@ -236,14 +244,43 @@ const endGamePage = function() {
     // Add form
     const formDivEl = document.createElement("div")
     formDivEl.className = "form_div";
+    const formEl = document.createElement("form")
+    formEl.innerHTML = "<label for='highscore'><p>Enter Initials: </p></label> <input type='text' name='highscore' id='highscore'><input type='button' value='submit' id='submit'>";
+    mainEl.appendChild(formEl);
+    // add functionality to submit button
+    const submit = document.getElementById("submit");
+    console.log(submit)
+    submit.addEventListener("click", onSubmit);
     
 }
 
+// Submit Event hander
+const onSubmit = function(event) {
+    event.preventDefault();
+    const form = document.querySelector("form")
+    const player = form.querySelector("input[type='text']").value
+    console.log(player)
+    const score = seconds;
+    console.log(score)
+    saveHighscore();
+    highscorePage();
+}
+const saveHighscore = function () {
+    score = seconds
+    const pastHighscore = localStorage.getItem("js_highscore");
+    if (!pastHighscore || score > pastHighscore) {
+        localStorage.setItem("js_highscore", score);
+        alert("New highscore!")
+    } else {
+        alert("Nice attempt. Try again.")
+    }
+}
+const highscorePage = function() {
+    clearMain();
 
-
+}
 // Initial Function Call
 homePage();
-
 
 
 
