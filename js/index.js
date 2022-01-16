@@ -1,10 +1,16 @@
 "use strict";
-let seconds = 75;
+// Settings
+let seconds = 750;
 let clock;
 let questionCount = 0;
 let score = 0;
 let player = "";
-
+// Sounds
+const correct = document.getElementById("correct");
+const incorrect = document.getElementById("incorrect");
+const gameOver = document.getElementById("game_over");
+const highscoreNoise = document.getElementById("highscoreNoise");
+// Global Elements
 const bodyEl = document.querySelector("body");
 const startBtnEl = document.getElementById("startBtn");
 const mainEl = document.createElement("main");
@@ -91,6 +97,7 @@ const problems = [
     }
 ]
 const shuffledProblems = shuffle(problems);
+const highscores = JSON.parse(localStorage.getItem("js_highscore")) || [];
 
 // Set up the opening page
 const homePage = function () {
@@ -133,7 +140,7 @@ const startGame = function () {
     clearElement("main");
     displayProblem();
     // initial timer
-    clock = setInterval(countdown, 1000);
+    clock = setInterval(countdown, 100);
     // give buttons event handlers
     answerBtnFunctionality();
 }
@@ -184,12 +191,14 @@ const reviewer = function (event) {
         displayProblem();
         answerBtnFunctionality();
         showCorrect();
+        correct.play();
     } else {
-        seconds -= 10;
+        seconds -= 100;
         clearElement("main");
         displayProblem();
         answerBtnFunctionality();
         showWrong();
+        incorrect.play();
     }
 }
 // Remove footer when hover over button
@@ -230,6 +239,7 @@ const showWrong = function () {
 // Stop game and show End game page
 const endGamePage = function () {
     // show seconds at zero and clear interval and main element
+    gameOver.play();
     document.querySelector("#timer").textContent = seconds;
     clearInterval(clock);
     clearElement("main");
@@ -258,30 +268,26 @@ const endGamePage = function () {
 // Submit Event hander
 const onSubmit = function (event) {
     event.preventDefault();
-    const form = document.querySelector("form")
-    let player = form.querySelector("input[type='text']").value
+    const form = document.querySelector("form");
+    score = seconds;
+    let player = form.querySelector("input[type='text']").value;
     if (!player) {
         alert("Please enter your initials");
         onSubmit();
     }
-    const score = seconds;
-    saveHighscore(score, player);
-    highscorePage();
-}
-// Save high score to local storage
-const saveHighscore = function (score, player) {
-    score = seconds;
-    const pastHighscore = localStorage.getItem("js_highscore");
-    if (!pastHighscore || score > pastHighscore) {
-        localStorage.setItem("js_highscore", score);
-        localStorage.setItem("player", player);
-        alert("New highscore!");
-    } else {
-        alert("You did not beat the highscore. Try again.")
+    // save user info in an object
+    const userScore = {
+        points: score,
+        name: player
     }
+    // add user info into local storage array
+    highscores.push(userScore);
+    localStorage.setItem("js_highscore", JSON.stringify(highscores));
+    highscorePage(userScore);
 }
+
 // Display high score page and retrieve high score from local storage
-const highscorePage = function () {
+const highscorePage = function (userScore) {
     clearElement("main");
     // create div
     const highscoreDivEl = document.createElement("div")
@@ -289,41 +295,56 @@ const highscorePage = function () {
     mainEl.appendChild(highscoreDivEl);
     // create h2 title
     const titleEl = document.createElement("h2");
-    titleEl.textContent = "High score:";
+    titleEl.textContent = "High scores:";
     highscoreDivEl.appendChild(titleEl);
-    // create highscore
-    const highscore = document.createElement("p");
-    highscore.className = "highscore_display";
-    // retrieve and display local storage highscore
-    const player = localStorage.getItem("player");
-    const score = localStorage.getItem("js_highscore")
-    highscore.textContent = "1. " + player + " - " + score;
-    highscoreDivEl.appendChild(highscore);
+    // Sort array of high scores from highest to lowest
+    highscores.sort((a, b) => b.points - a.points)
+    // Create array with top 5 socres. 
+    highscores.splice(5);
+    for (let i = 0; i < highscores.length; i++) {
+        // create highscore
+        const highscore = document.createElement("p");
+        highscore.className = "highscore_display";
+        highscore.textContent = (i + 1) + ". " + highscores[i].name + " - " + highscores[i].points;
+        highscoreDivEl.appendChild(highscore);
+    }
     // make buttons "Go back" and "Clear high scores";
     const highscoreBtnDivEl = document.createElement("div")
     highscoreBtnDivEl.innerHTML = "<input type='button' class='highscorePageBtn' id='go_back' value='Go Back'><input type='button' class='highscorePageBtn' id='clear_highscore' value='Clear high scores'>"
     highscoreDivEl.appendChild(highscoreBtnDivEl);
     const goBack = document.querySelector("#go_back");
     const clearHighscore = document.querySelector("#clear_highscore");
+    // add functionality to buttons
     goBack.addEventListener("click", resetGame)
     clearHighscore.addEventListener("click", clearLocalStorage);
+    console.log(userScore.points)
+    console.log(highscores[0].points)
+    if (userScore.points === highscores[0].points) {
+        highscoreNoise.play();
+        const highscoreMessage = document.createElement("h3")
+        highscoreMessage.textContent = "NEW HIGH SCORE!!!"
+        mainEl.appendChild(highscoreMessage);
+    }
 }
 // Event Handler to Clear Local Storage
 const clearLocalStorage = function () {
-    localStorage.removeItem("player");
     localStorage.removeItem("js_highscore");
-    const display = document.querySelector("p.highscore_display");
-    display.textContent = "No high score";
+    const display = document.querySelectorAll("p.highscore_display");
+    display[0].textContent = "No High scores";
+    for (let i = 1; i < display.length; i++) {
+        display[i].remove();
+    }
 }
 // Event Handler for Go Back. Resets global variables
 const resetGame = function () {
-    seconds = 75;
+    seconds = 750;
     clock;
     questionCount = 0;
     score = 0;
     clearElement("main")
     clearElement("body");
     homePage();
+    location.reload();
 }
 // Initial Function Call
 homePage();
@@ -359,3 +380,20 @@ function shuffle(array) {
     }
     return array;
 };
+/////////////// Sounds //////////////
+//correct sound function
+function correctNoise() {
+    if (correct.play()) {
+        correct.pause();
+        correct.currentTime = 0;
+    }
+    correct.play();
+}
+//incorrect sound function
+function incorrectNoise() {
+    if (incorrect.play()) {
+        incorrect.pause();
+        incorrect.currentTime = 0;
+    }
+    incorrect.play();
+}
