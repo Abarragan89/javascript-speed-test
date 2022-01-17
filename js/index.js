@@ -133,7 +133,42 @@ const homePage = function () {
     mainEl.appendChild(startBtnEl);
     // give the button functionality
     startBtnEl.addEventListener("click", startGame)
+    headerLinkEl.addEventListener("click", showHighScores);
 }
+
+const showHighScores = function () {
+    clearInterval(clock);
+    clearElement("main");
+    // create div
+    const highscoreDivEl = document.createElement("div")
+    highscoreDivEl.className = "highscore_div";
+    mainEl.appendChild(highscoreDivEl);
+    // create h2 title
+    const titleEl = document.createElement("h2");
+    titleEl.textContent = "High scores:";
+    highscoreDivEl.appendChild(titleEl);
+    // Sort array of high scores from highest to lowest
+    highscores.sort((a, b) => b.points - a.points)
+    // Create array with top 5 socres. 
+    highscores.splice(5);
+    for (let i = 0; i < highscores.length; i++) {
+        // create highscore
+        const highscore = document.createElement("p");
+        highscore.className = "highscore_display";
+        highscore.textContent = (i + 1) + ". " + highscores[i].name + " - " + highscores[i].points;
+        highscoreDivEl.appendChild(highscore);
+    }
+    // make buttons "Go back" and "Clear high scores";
+    const highscoreBtnDivEl = document.createElement("div")
+    highscoreBtnDivEl.innerHTML = "<input type='button' class='highscorePageBtn' id='go_back' value='Go Back'><input type='button' class='highscorePageBtn' id='clear_highscore' value='Clear high scores'>"
+    highscoreDivEl.appendChild(highscoreBtnDivEl);
+    const goBack = document.querySelector("#go_back");
+    const clearHighscore = document.querySelector("#clear_highscore");
+    // add functionality to buttons
+    goBack.addEventListener("click", resetGame)
+    clearHighscore.addEventListener("click", clearLocalStorage);
+}
+
 // Start game event handler
 const startGame = function () {
     //shuffle array
@@ -317,8 +352,6 @@ const highscorePage = function (userScore) {
     // add functionality to buttons
     goBack.addEventListener("click", resetGame)
     clearHighscore.addEventListener("click", clearLocalStorage);
-    console.log(userScore.points)
-    console.log(highscores[0].points)
     if (userScore.points === highscores[0].points) {
         highscoreNoise.play();
         const highscoreMessage = document.createElement("h3")
